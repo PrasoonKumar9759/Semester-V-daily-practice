@@ -1,51 +1,31 @@
 class Solution {
-    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
-        int m=obstacleGrid.length;
-        int n=obstacleGrid[0].length;
+    public int uniquePathsWithObstacles(int[][] grid) {
         
-        int[][] dp=new int[m][n];
-
-        if(obstacleGrid[0][0]==1){
+        int m=grid.length,n=grid[0].length;
+        if(m==1 && n==1 && grid[0][0]==1) return 0;
+        int[][] dp =new int[m][n];
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                dp[i][j]=-1;
+            }
+        }
+        return call(dp,grid,0,0,m-1,n-1);
+    }
+    public int call(int[][] dp,int[][]grid,int cr,int cc,int er,int ec){
+        if(cr==er && cc==ec){
+            return 1;
+        }if(cr>er || cc>ec || grid[cr][cc]==1){
             return 0;
         }
-        
-
-        //setting up default values
-        for(int i=0;i<m;i++){
-            for(int j=0;j<n;j++){
-                if(obstacleGrid[i][j]==1){
-                    dp[i][j]=-1;
-                }else{
-                    dp[i][j]=0;
-                    
-                }
-            }
+        int a=0,b=0;
+        if(dp[cr][cc]!=-1) return dp[cr][cc];
+        if(cr+1<=er &&grid[cr+1][cc]!=1){
+            a=call(dp,grid,cr+1,cc,er,ec);
         }
-
-        //using dp
-        for(int i=0;i<m;i++){
-            for(int j=0;j<n;j++){
-                if(i==0 && j==0 && dp[i][j]!=-1){
-                    dp[i][j]=1;
-                    continue;
-                }
-                if(dp[i][j]!=-1){
-                    if(i==0){
-                        dp[i][j]=dp[i][j-1];
-                        continue;
-                    }else if(j==0){
-                        dp[i][j]=dp[i-1][j];
-                        continue;
-                    }
-                    dp[i][j]=dp[i-1][j]+dp[i][j-1];
-                }else{
-                    dp[i][j]=0;
-                }
-            }
+        if(cc+1<=ec && grid[cr][cc+1]!=1){
+            b= call(dp,grid,cr,cc+1,er,ec);
         }
-
-        return dp[m-1][n-1];
-
-
+        dp[cr][cc]=a+b;
+        return a+b;
     }
 }
